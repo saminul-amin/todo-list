@@ -45,7 +45,7 @@ export default function Home() {
         transition={{ delay: 1, duration: 0.6 }}
         className="mt-8"
       >
-        <Link to={user?.email ? "/tasks" : "/signup"}>
+        <Link to={user?.email ? "/tasks/todo" : "/signup"}>
           <button className="px-6 py-3 text-lg font-semibold bg-stone-300 text-black rounded-xl shadow-lg hover:bg-stone-400">
             Get Started
           </button>
