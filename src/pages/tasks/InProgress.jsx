@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function InProgress() {
   const {
@@ -10,12 +13,39 @@ export default function InProgress() {
     reset,
     formState: { errors },
   } = useForm();
-  const [tasks, setTasks] = useState([]);
+  const {
+    data: currentTasks = [],
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["currentTasks"],
+    queryFn: async () => {
+      const res = await axios.get("http://localhost:5001/in-progress");
+      return res.data;
+    },
+  });
+  if (isLoading) return <p>Loading...</p>;
+//   console.log(currentTasks);
 
-  // Placeholder function for adding a task
+  // Function to add a task
   const onSubmit = (data) => {
-    // Implement add task functionality here
     console.log(data);
+    const task = { title: data.title, dueDate: data.date };
+    axios
+      .post("http://localhost:5001/in-progress", task)
+      .then((res) => {
+        console.log(res.data);
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your task has been added",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        refetch();
+        reset();
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -40,7 +70,7 @@ export default function InProgress() {
           )}
           <input
             type="date"
-            {...register("dueDate", { required: "Due Date is Required" })}
+            {...register("date", { required: "Due Date is Required" })}
             className="w-full p-2 border border-stone-500 rounded-md focus:ring-stone-500"
           />
           {errors.date && (
@@ -56,12 +86,12 @@ export default function InProgress() {
       </motion.div>
 
       <div className="mt-6 w-full max-w-lg">
-        {tasks.length === 0 ? (
+        {currentTasks.length === 0 ? (
           <p className="text-center text-stone-500">
             No tasks yet. Start adding some!
           </p>
         ) : (
-          tasks.map((task, index) => (
+          currentTasks.map((task, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, x: -20 }}

@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Done() {
   const {
@@ -10,12 +12,38 @@ export default function Done() {
     reset,
     formState: { errors },
   } = useForm();
-  const [tasks, setTasks] = useState([]);
+  const {
+    data: completedTasks = [],
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["completedTasks"],
+    queryFn: async () => {
+      const res = await axios.get("http://localhost:5001/done");
+      return res.data;
+    },
+  });
+  if (isLoading) return <p>Loading...</p>;
 
-  // Placeholder function for adding a task
+  // Function to add a task
   const onSubmit = (data) => {
-    // Implement add task functionality here
     console.log(data);
+    const task = { title: data.title, dueDate: data.date };
+    axios
+      .post("http://localhost:5001/done", task)
+      .then((res) => {
+        console.log(res.data);
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your task has been added",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        refetch();
+        reset();
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -40,7 +68,9 @@ export default function Done() {
           )}
           <input
             type="date"
-            {...register("dueDate", { required: "Due Date is Required" })}
+            {...register("date", {
+              required: "Date of Completion is Required",
+            })}
             className="w-full p-2 border border-stone-500 rounded-md focus:ring-stone-500"
           />
           {errors.date && (
@@ -56,12 +86,12 @@ export default function Done() {
       </motion.div>
 
       <div className="mt-6 w-full max-w-lg">
-        {tasks.length === 0 ? (
+        {completedTasks.length === 0 ? (
           <p className="text-center text-stone-500">
             No tasks yet. Start adding some!
           </p>
         ) : (
-          tasks.map((task, index) => (
+          completedTasks.map((task, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, x: -20 }}
@@ -73,7 +103,7 @@ export default function Done() {
                 <h3 className="text-lg font-semibold text-stone-600">
                   {task.title}
                 </h3>
-                <p className="text-sm text-stone-400">Due: {task.dueDate}</p>
+                <p className="text-sm text-stone-400">Completed: {task.dueDate}</p>
               </div>
               <div className="flex gap-2">
                 <button className="text-stone-500 hover:text-stone-600 p-2">

@@ -90,7 +90,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/in-progess", async (req, res) => {
+    app.get("/in-progress", async (req, res) => {
       const result = await inprogressColletion.find().toArray();
       res.send(result);
     });

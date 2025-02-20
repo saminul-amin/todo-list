@@ -10,7 +10,7 @@ export default function Tasks() {
           <div className="container mx-auto max-w-6xl grid grid-cols-3 gap-4">
             <Link
               to="todo"
-              className={`text-center ${
+              className={`text-center pb-4 ${
                 location.endsWith("todo") && "border-b-4 border-stone-500"
               }`}
             >

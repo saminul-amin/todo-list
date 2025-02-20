@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -13,13 +12,12 @@ export default function Todo() {
     reset,
     formState: { errors },
   } = useForm();
-  //   const [tasks, setTasks] = useState([]);
   const {
     data: tasks = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["tasks"],
     queryFn: async () => {
       const res = await axios.get("http://localhost:5001/todo");
       return res.data;
@@ -30,7 +28,6 @@ export default function Todo() {
 
   // Function to add a task
   const onSubmit = (data) => {
-    // setTasks([...tasks, { ...data, id: Date.now() }]);
     console.log(data);
     const task = { title: data.title, dueDate: data.date };
     axios
