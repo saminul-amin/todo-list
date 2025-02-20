@@ -1,138 +1,124 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+
+// import "@fontsource/amiri";
+// import useAuth from "../hooks/useAuth";
 
 const NavBar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  //   const { user, userLogOut } = useAuth();
+  //   console.log(user.email);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const handleLogOut = () => {
+    userLogOut()
+      .then(() => console.log("logged out"))
+      .catch((err) => console.log(err));
   };
 
-  return (
-    <nav className="bg-white shadow-md fixed w-full top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <span className="text-2xl font-bold text-gray-800">D'oh List</span>
-          </div>
-
-          {/* Hamburger Menu Button (Mobile) */}
-          <div className="flex items-center md:hidden">
+  const links = (
+    <>
+      <li>
+        <Link
+          to="/"
+          className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
+        >
+          Home
+        </Link>
+      </li>
+      <li>
+        <Link
+          to="/quizzes"
+          className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
+        >
+          Quizzes
+        </Link>
+      </li>
+      <li>
+        <Link
+          to="/contact"
+          className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
+        >
+          Contact
+        </Link>
+      </li>
+      <li>
+        <Link
+          to="/signin"
+          className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
+        >
+          Sign In
+        </Link>
+      </li>
+      <li>
+        <Link
+          to="/signup"
+          className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
+        >
+          Sign Up
+        </Link>
+      </li>
+      {/* {user?.email ? (
+        <>
+          <li>
             <button
-              onClick={toggleMenu}
-              type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-800 hover:text-blue-500 focus:outline-none"
+              onClick={handleLogOut}
+              className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
             >
-              <svg
-                className="h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {isMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16m-7 6h7"
-                  />
-                )}
-              </svg>
+              Sign Out
             </button>
-          </div>
-
-          {/* Navigation Links (Desktop) */}
-          <div className="hidden md:flex items-center space-x-4">
-            <a
-              href="#"
-              className="text-gray-800 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium"
+          </li>
+        </>
+      ) : (
+        <>
+          <li>
+            <Link
+              to="/signin"
+              className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
             >
-              Home
-            </a>
-            <a
-              href="#"
-              className="text-gray-800 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium"
+              Sign In
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/signup"
+              className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
             >
-              Tasks
-            </a>
-            <a
-              href="#"
-              className="text-gray-800 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Profile
-            </a>
-          </div>
+              Sign Up
+            </Link>
+          </li>
+        </>
+      )} */}
+    </>
+  );
 
-          {/* User Profile Section */}
-          <div className="hidden md:flex items-center">
-            <div className="flex-shrink-0">
-              <img
-                className="h-8 w-8 rounded-full"
-                src="https://via.placeholder.com/150" // Replace with user profile image
-                alt="User"
-              />
-            </div>
-            <div className="ml-3">
-              <span className="text-sm font-medium text-gray-800">
-                John Doe
-              </span>{" "}
-              {/* Replace with user name */}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu (Dropdown) */}
-      {isMenuOpen && (
+  return (
+    <nav className="bg-stone-600 p-4 shadow-md">
+      <div className="container mx-auto max-w-6xl flex justify-between items-center">
+        <Link
+          to="/"
+          className="text-white text-xl font-bold"
+          //   style={{ fontFamily: "Amiri, serif" }}
+        >
+          D'Oh List
+        </Link>
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a
-              href="#"
-              className="block text-gray-800 hover:text-blue-500 px-3 py-2 rounded-md text-base font-medium"
-            >
-              Home
-            </a>
-            <a
-              href="#"
-              className="block text-gray-800 hover:text-blue-500 px-3 py-2 rounded-md text-base font-medium"
-            >
-              Tasks
-            </a>
-            <a
-              href="#"
-              className="block text-gray-800 hover:text-blue-500 px-3 py-2 rounded-md text-base font-medium"
-            >
-              Profile
-            </a>
-          </div>
-          {/* User Profile Section (Mobile) */}
-          <div className="px-2 pt-2 pb-3 border-t border-gray-200">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="https://via.placeholder.com/150" // Replace with user profile image
-                  alt="User"
-                />
-              </div>
-              <div className="ml-3">
-                <span className="text-sm font-medium text-gray-800">
-                  John Doe
-                </span>{" "}
-                {/* Replace with user name */}
-              </div>
-            </div>
-          </div>
+          <button onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? (
+              <X className="text-white w-6 h-6" />
+            ) : (
+              <Menu className="text-white w-6 h-6" />
+            )}
+          </button>
         </div>
-      )}
+        <ul
+          className={`md:flex md:space-x-6 absolute md:relative top-16 md:top-0 left-0 w-full md:w-auto bg-stone-600 md:bg-transparent md:flex-row flex-col items-center md:items-center transition-all duration-300 ease-in-out ${
+            isOpen ? "block" : "hidden"
+          }`}
+        >
+          {links}
+        </ul>
+      </div>
     </nav>
   );
 };
