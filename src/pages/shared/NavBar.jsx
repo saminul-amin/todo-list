@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import useAuth from "../../hooks/useAuth";
 
-// import "@fontsource/amiri";
-// import useAuth from "../hooks/useAuth";
+import "@fontsource/coiny";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  //   const { user, userLogOut } = useAuth();
+  const { user, userLogOut } = useAuth();
   //   console.log(user.email);
 
   const handleLogOut = () => {
@@ -28,10 +28,10 @@ const NavBar = () => {
       </li>
       <li>
         <Link
-          to="/quizzes"
+          to="/tasks"
           className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
         >
-          Quizzes
+          Tasks
         </Link>
       </li>
       <li>
@@ -39,26 +39,10 @@ const NavBar = () => {
           to="/contact"
           className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
         >
-          Contact
+          Contact Us
         </Link>
       </li>
-      <li>
-        <Link
-          to="/signin"
-          className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
-        >
-          Sign In
-        </Link>
-      </li>
-      <li>
-        <Link
-          to="/signup"
-          className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
-        >
-          Sign Up
-        </Link>
-      </li>
-      {/* {user?.email ? (
+      {user?.email ? (
         <>
           <li>
             <button
@@ -88,7 +72,7 @@ const NavBar = () => {
             </Link>
           </li>
         </>
-      )} */}
+      )}
     </>
   );
 
@@ -97,8 +81,8 @@ const NavBar = () => {
       <div className="container mx-auto max-w-6xl flex justify-between items-center">
         <Link
           to="/"
-          className="text-white text-xl font-bold"
-          //   style={{ fontFamily: "Amiri, serif" }}
+          className="text-white text-2xl font-medium"
+          style={{ fontFamily: "Coiny, serif" }}
         >
           D'Oh List
         </Link>

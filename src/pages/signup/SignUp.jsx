@@ -1,11 +1,12 @@
 import { useForm } from "react-hook-form";
 import { FaGoogle } from "react-icons/fa";
-// import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
+
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
+const SignUp = () => {
   const {
     register,
     handleSubmit,
@@ -13,38 +14,38 @@ const Signup = () => {
     reset,
     formState: { errors },
   } = useForm();
-//   const { createUser, updateUserProfile, setUser } = useAuth();
+  const { createUser, updateUserProfile, setUser } = useAuth();
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
     console.log(data);
-    // createUser(data.email, data.password)
-    //   .then((result) => {
-    //     console.log(result.user);
-    //     setUser(result.user);
-    //     updateUserProfile({ displayName: data.name })
-    //       .then(() => {
-    //         Swal.fire({
-    //           position: "center",
-    //           icon: "success",
-    //           title: "Your account has been created",
-    //           showConfirmButton: false,
-    //           timer: 1500,
-    //         });
-    //         const newUser = {
-    //           name: data.name,
-    //           email: data.email,
-    //           role: "user",
-    //         };
-    //         axios
-    //           .post("http://localhost:5000/users", newUser)
-    //           .then((res) => console.log(res.data));
-    //         reset();
-    //         navigate("/");
-    //       })
-    //       .catch((err) => console.log(err));
-    //   })
-    //   .catch((err) => console.log(err));
+    // I need to fix the existing user issue
+    createUser(data.email, data.password)
+      .then((result) => {
+        console.log(result.user);
+        setUser(result.user);
+        updateUserProfile({ displayName: data.name })
+          .then(() => {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Your account has been created",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            const newUser = {
+              name: data.name,
+              email: data.email,
+            };
+            axios
+              .post("http://localhost:5001/users", newUser)
+              .then((res) => console.log(res.data));
+            reset();
+            navigate("/");
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -183,4 +184,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignUp;
