@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fontsource/coiny": "^5.1.1",
+    "@tanstack/react-query": "^5.66.8",
     "axios": "^1.7.9",
     "firebase": "^11.3.1",
     "framer-motion": "^12.4.5",

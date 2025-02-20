@@ -19,7 +19,7 @@ export default function InProgress() {
   };
 
   return (
-    <div className="min-h-screen mt-8 bg-stone-100 p-6 flex flex-col items-center">
+    <div className="min-h-screen mt-8 bg-stone-100 p-6 flex flex-col items-center rounded-xl">
       <motion.div
         className="w-full max-w-lg bg-white p-6 rounded-2xl shadow-lg"
         initial={{ opacity: 0, y: -20 }}

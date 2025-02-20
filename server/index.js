@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const WebSocket = require('ws');
+// const WebSocket = require('ws');
 require("dotenv").config();
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const port = process.env.PORT || 5001;
@@ -9,32 +9,32 @@ const app = express();
 const server = require("http").Server(app);
 
 // Create WebSocket server
-const wss = new WebSocket.Server({ server });
+// const wss = new WebSocket.Server({ server });
 
 // Broadcast function to send data to all connected clients
-function broadcast(data) {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(data));
-    }
-  });
-}
+// function broadcast(data) {
+//   wss.clients.forEach((client) => {
+//     if (client.readyState === WebSocket.OPEN) {
+//       client.send(JSON.stringify(data));
+//     }
+//   });
+// }
 
 // Handle WebSocket connections
-wss.on("connection", (ws) => {
-  console.log("A client connected");
+// wss.on("connection", (ws) => {
+//   console.log("A client connected");
 
-  // Listen for task update events (for example)
-  ws.on("message", (message) => {
-    console.log("Received message:", message);
-    // Broadcast changes to all connected clients
-    broadcast({ type: "TASK_UPDATED", data: message });
-  });
+//   // Listen for task update events (for example)
+//   ws.on("message", (message) => {
+//     console.log("Received message:", message);
+//     // Broadcast changes to all connected clients
+//     broadcast({ type: "TASK_UPDATED", data: message });
+//   });
 
-  ws.on("close", () => {
-    console.log("Client disconnected");
-  });
-});
+//   ws.on("close", () => {
+//     console.log("Client disconnected");
+//   });
+// });
 
 app.use(cors());
 app.use(express.json());
@@ -58,6 +58,9 @@ async function run() {
     const database = client.db("todo-list");
     const userCollection = database.collection("users");
     const taskCollection = database.collection("tasks");
+    const todoCollection = database.collection("todos");
+    const inprogressColletion = database.collection("inprogress");
+    const doneCollection = database.collection("dones");
 
     // user related APIs
     app.get("/users", async (req, res) => {
@@ -76,55 +79,37 @@ async function run() {
       res.send(result);
     });
 
-    // Get All Tasks
-    app.get("/api/tasks", async (req, res) => {
-      try {
-        const tasks = await taskCollection.find({}).toArray();
-        res.json(tasks);
-      } catch (err) {
-        res.status(500).json({ error: "Failed to fetch tasks" });
-      }
+    app.get("/todo", async (req, res) => {
+      const result = await todoCollection.find().toArray();
+      res.send(result);
     });
 
-    // Add a New Task
-    app.post("/api/tasks", async (req, res) => {
-      try {
-        const { title, category } = req.body;
-        const newTask = { title, category, createdAt: new Date() };
-        const result = await taskCollection.insertOne(newTask);
-        res.status(201).json({ ...newTask, id: result.insertedId });
-      } catch (err) {
-        res.status(500).json({ error: "Failed to add task" });
-      }
+    app.post("/todo", async (req, res) => {
+      const todo = req.body;
+      const result = await todoCollection.insertOne(todo);
+      res.send(result);
     });
 
-    // Update Task (Title or Category)
-    app.put("/api/tasks/:id", async (req, res) => {
-      try {
-        const { title, category } = req.body;
-        const taskId = req.params.id;
-        const updateData = { title, category };
-        await taskCollection.updateOne(
-          { _id: new require("mongodb").ObjectId(taskId) },
-          { $set: updateData }
-        );
-        res.sendStatus(200);
-      } catch (err) {
-        res.status(500).json({ error: "Failed to update task" });
-      }
+    app.get("/in-progess", async (req, res) => {
+      const result = await inprogressColletion.find().toArray();
+      res.send(result);
     });
 
-    // Delete Task
-    app.delete("/api/tasks/:id", async (req, res) => {
-      try {
-        const taskId = req.params.id;
-        await taskCollection.deleteOne({
-          _id: new require("mongodb").ObjectId(taskId),
-        });
-        res.sendStatus(200);
-      } catch (err) {
-        res.status(500).json({ error: "Failed to delete task" });
-      }
+    app.post("/in-progress", async (req, res) => {
+      const task = req.body;
+      const result = await inprogressColletion.insertOne(task);
+      res.send(result);
+    });
+
+    app.get("/done", async (req, res) => {
+      const result = await doneCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/done", async (req, res) => {
+      const task = req.body;
+      const result = await doneCollection.insertOne(task);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
