@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 // const WebSocket = require('ws');
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5001;
 
 const app = express();
@@ -90,6 +90,28 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/todo/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: req.body,
+      };
+      const result = await todoCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+
+    app.delete("/todo/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await todoCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.get("/in-progress", async (req, res) => {
       const result = await inprogressColletion.find().toArray();
       res.send(result);
@@ -101,6 +123,28 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/in-progress/:id", async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updatedDoc = {
+          $set: req.body,
+        };
+        const result = await inprogressColletion.updateOne(
+          filter,
+          updatedDoc,
+          options
+        );
+        res.send(result);
+      });
+  
+      app.delete("/in-progress/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await inprogressColletion.deleteOne(query);
+        res.send(result);
+      });
+
     app.get("/done", async (req, res) => {
       const result = await doneCollection.find().toArray();
       res.send(result);
@@ -111,6 +155,28 @@ async function run() {
       const result = await doneCollection.insertOne(task);
       res.send(result);
     });
+
+    app.put("/done/:id", async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updatedDoc = {
+          $set: req.body,
+        };
+        const result = await doneCollection.updateOne(
+          filter,
+          updatedDoc,
+          options
+        );
+        res.send(result);
+      });
+  
+      app.delete("/done/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await doneCollection.deleteOne(query);
+        res.send(result);
+      });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

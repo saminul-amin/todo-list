@@ -5,6 +5,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Loading from "../shared/Loading";
 
 export default function InProgress() {
   const {
@@ -24,8 +25,8 @@ export default function InProgress() {
       return res.data;
     },
   });
-  if (isLoading) return <p>Loading...</p>;
-//   console.log(currentTasks);
+  if (isLoading) return <Loading />;
+  //   console.log(currentTasks);
 
   // Function to add a task
   const onSubmit = (data) => {
@@ -46,6 +47,29 @@ export default function InProgress() {
         reset();
       })
       .catch((err) => console.log(err));
+  };
+
+  // Function to delete a task
+  const handleDelete = (id) => {
+    // console.log(id);
+    Swal.fire({
+      title: "Are you sure you want to delete the task?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Delete it",
+      denyButtonText: `Don't delete`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        Swal.fire("Deleted!", "", "success");
+        axios.delete(`http://localhost:5001/in-progress/${id}`).then((res) => {
+          console.log(res);
+          refetch();
+        });
+      } else if (result.isDenied) {
+        Swal.fire("Task was not deleted", "", "info");
+      }
+    });
   };
 
   return (
@@ -106,10 +130,16 @@ export default function InProgress() {
                 <p className="text-sm text-stone-400">Due: {task.dueDate}</p>
               </div>
               <div className="flex gap-2">
-                <button className="text-stone-500 hover:text-stone-600 p-2">
+                <button
+                  onClick={() => handleEdit(task._id)}
+                  className="text-stone-500 hover:text-stone-600 p-2"
+                >
                   <Edit size={18} />
                 </button>
-                <button className="text-red-500 hover:text-red-600 p-2">
+                <button
+                  onClick={() => handleDelete(task._id)}
+                  className="text-red-500 hover:text-red-600 p-2"
+                >
                   <Trash2 size={18} />
                 </button>
               </div>
