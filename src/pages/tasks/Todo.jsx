@@ -161,7 +161,7 @@ export default function Todo() {
       </motion.div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="tasksList">
+        <Droppable droppableId="tasksList" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false} >
           {(provided) => (
             <div
               {...provided.droppableProps}
@@ -184,10 +184,11 @@ export default function Todo() {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        // initial={{ opacity: 0, x: -20 }}
-                        // animate={{ opacity: 1, x: 0 }}
-                        // transition={{ duration: 0.3, delay: index * 0.1 }}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
                         className="my-3 p-4 bg-white shadow-md rounded-lg flex justify-between items-center"
+                        whileDrag={{ scale: 1.05, boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
                         layout
                       >
                         <div>
