@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import Loading from "../shared/Loading";
 
 export default function InProgress() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
   const {
     register,
     handleSubmit,
@@ -49,6 +51,34 @@ export default function InProgress() {
       .catch((err) => console.log(err));
   };
 
+  const openModal = (task) => {
+    setEditingTask(task);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingTask(null);
+  };
+
+  // Function to edit a task
+  const updateTask = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const editedTitle = form.editedTitle.value;
+    const editedDate = form.editedDate.value;
+    const newTask = { title: editedTitle, dueDate: editedDate };
+    console.log(newTask);
+    axios
+      .put(`http://localhost:5001/in-progress/${editingTask._id}`, newTask)
+      .then((res) => {
+        console.log(res);
+        refetch();
+      })
+      .catch((err) => console.log(err));
+    closeModal();
+  };
+
   // Function to delete a task
   const handleDelete = (id) => {
     // console.log(id);
@@ -63,7 +93,7 @@ export default function InProgress() {
       if (result.isConfirmed) {
         Swal.fire("Deleted!", "", "success");
         axios.delete(`http://localhost:5001/in-progress/${id}`).then((res) => {
-          console.log(res);
+          console.log(res.data);
           refetch();
         });
       } else if (result.isDenied) {
@@ -131,7 +161,7 @@ export default function InProgress() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => handleEdit(task._id)}
+                  onClick={() => openModal(task)}
                   className="text-stone-500 hover:text-stone-600 p-2"
                 >
                   <Edit size={18} />
@@ -147,6 +177,59 @@ export default function InProgress() {
           ))
         )}
       </div>
+      {/* Edit Modal */}
+      {isModalOpen && (
+        <motion.div
+          id="modal-background"
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={(e) => e.target.id === "modal-background" && closeModal()}
+        >
+          <motion.div
+            className="bg-white p-6 rounded-lg shadow-lg w-1/3"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+          >
+            <h2 className="text-lg text-center font-semibold text-gray-700 mb-4">
+              Update Task
+            </h2>
+            <form onSubmit={updateTask} className="space-y-4">
+              <input
+                name="editedTitle"
+                placeholder="Task Title"
+                className="w-full p-2 border rounded"
+                defaultValue={editingTask.title}
+                required
+              />
+              <input
+                type="date"
+                name="editedDate"
+                className="w-full p-2 border rounded"
+                defaultValue={editingTask.dueDate}
+                required
+              />
+              <div className="flex justify-center gap-6">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-stone-500 hover:bg-stone-700 text-white rounded"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-4 py-2 bg-gray-400 hover:bg-gray-600 text-white rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }
