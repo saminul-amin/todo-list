@@ -79,9 +79,19 @@ async function run() {
       res.send(result);
     });
 
+    // app.get("/todo", async (req, res) => {
+    //   const result = await todoCollection.find().toArray();
+    //   res.send(result);
+    // });
+
     app.get("/todo", async (req, res) => {
-      const result = await todoCollection.find().toArray();
-      res.send(result);
+      try {
+        const tasks = await todoCollection.find().sort({ order: 1 }).toArray();
+        res.json(tasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
     });
 
     app.post("/todo", async (req, res) => {
@@ -105,6 +115,26 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/api/todo/reorder", async (req, res) => {
+      try {
+        const { tasks } = req.body;
+
+        const bulkOps = tasks.map((task, index) => ({
+          updateOne: {
+            filter: { _id: new ObjectId(task._id) },
+            update: { $set: { order: index } },
+          },
+        }));
+
+        await todoCollection.bulkWrite(bulkOps);
+
+        res.status(200).json({ message: "Task order updated successfully!" });
+      } catch (error) {
+        console.error("Error updating task order:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
+    });
+
     app.delete("/todo/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -124,26 +154,26 @@ async function run() {
     });
 
     app.put("/in-progress/:id", async (req, res) => {
-        const id = req.params.id;
-        const filter = { _id: new ObjectId(id) };
-        const options = { upsert: true };
-        const updatedDoc = {
-          $set: req.body,
-        };
-        const result = await inprogressColletion.updateOne(
-          filter,
-          updatedDoc,
-          options
-        );
-        res.send(result);
-      });
-  
-      app.delete("/in-progress/:id", async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: new ObjectId(id) };
-        const result = await inprogressColletion.deleteOne(query);
-        res.send(result);
-      });
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: req.body,
+      };
+      const result = await inprogressColletion.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+
+    app.delete("/in-progress/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await inprogressColletion.deleteOne(query);
+      res.send(result);
+    });
 
     app.get("/done", async (req, res) => {
       const result = await doneCollection.find().toArray();
@@ -157,26 +187,26 @@ async function run() {
     });
 
     app.put("/done/:id", async (req, res) => {
-        const id = req.params.id;
-        const filter = { _id: new ObjectId(id) };
-        const options = { upsert: true };
-        const updatedDoc = {
-          $set: req.body,
-        };
-        const result = await doneCollection.updateOne(
-          filter,
-          updatedDoc,
-          options
-        );
-        res.send(result);
-      });
-  
-      app.delete("/done/:id", async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: new ObjectId(id) };
-        const result = await doneCollection.deleteOne(query);
-        res.send(result);
-      });
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: req.body,
+      };
+      const result = await doneCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+
+    app.delete("/done/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await doneCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
