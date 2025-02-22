@@ -142,9 +142,22 @@ async function run() {
       res.send(result);
     });
 
+    // app.get("/in-progress", async (req, res) => {
+    //   const result = await inprogressColletion.find().toArray();
+    //   res.send(result);
+    // });
+
     app.get("/in-progress", async (req, res) => {
-      const result = await inprogressColletion.find().toArray();
-      res.send(result);
+      try {
+        const tasks = await inprogressColletion
+          .find()
+          .sort({ order: 1 })
+          .toArray();
+        res.json(tasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
     });
 
     app.post("/in-progress", async (req, res) => {
@@ -168,6 +181,26 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/api/in-progress/reorder", async (req, res) => {
+      try {
+        const { tasks } = req.body;
+
+        const bulkOps = tasks.map((task, index) => ({
+          updateOne: {
+            filter: { _id: new ObjectId(task._id) },
+            update: { $set: { order: index } },
+          },
+        }));
+
+        await inprogressColletion.bulkWrite(bulkOps);
+
+        res.status(200).json({ message: "Task order updated successfully!" });
+      } catch (error) {
+        console.error("Error updating task order:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
+    });
+
     app.delete("/in-progress/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -175,9 +208,19 @@ async function run() {
       res.send(result);
     });
 
+    // app.get("/done", async (req, res) => {
+    //   const result = await doneCollection.find().toArray();
+    //   res.send(result);
+    // });
+
     app.get("/done", async (req, res) => {
-      const result = await doneCollection.find().toArray();
-      res.send(result);
+      try {
+        const tasks = await doneCollection.find().sort({ order: 1 }).toArray();
+        res.json(tasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
     });
 
     app.post("/done", async (req, res) => {
@@ -199,6 +242,26 @@ async function run() {
         options
       );
       res.send(result);
+    });
+
+    app.put("/api/done/reorder", async (req, res) => {
+      try {
+        const { tasks } = req.body;
+
+        const bulkOps = tasks.map((task, index) => ({
+          updateOne: {
+            filter: { _id: new ObjectId(task._id) },
+            update: { $set: { order: index } },
+          },
+        }));
+
+        await doneCollection.bulkWrite(bulkOps);
+
+        res.status(200).json({ message: "Task order updated successfully!" });
+      } catch (error) {
+        console.error("Error updating task order:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
     });
 
     app.delete("/done/:id", async (req, res) => {

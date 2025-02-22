@@ -106,7 +106,7 @@ export default function Todo() {
   // Function to handle drag and drop
   const handleDragEnd = async (result) => {
     // console.log(result);
-    if (!result.destination) return; // If dropped outside the list, do nothing
+    if (!result.destination) return;
     const updatedTasks = [...tasks];
     const [reorderedTask] = updatedTasks.splice(result.source.index, 1);
     updatedTasks.splice(result.destination.index, 0, reorderedTask);

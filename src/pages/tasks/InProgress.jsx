@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Loading from "../shared/Loading";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 export default function InProgress() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,6 +103,26 @@ export default function InProgress() {
     });
   };
 
+  // Function to handle drag and drop
+  const handleDragEnd = async (result) => {
+    // console.log(result);
+    if (!result.destination) return;
+    const updatedTasks = [...currentTasks];
+    const [reorderedTask] = updatedTasks.splice(result.source.index, 1);
+    updatedTasks.splice(result.destination.index, 0, reorderedTask);
+
+    // setTasks(updatedTasks);
+    // console.log("hi", updatedTasks);
+    try {
+      await axios.put("http://localhost:5001/api/in-progress/reorder", {
+        tasks: updatedTasks,
+      });
+      refetch(); 
+    } catch (error) {
+      console.error("Error updating task order:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen mt-8 bg-stone-100 p-6 flex flex-col items-center rounded-xl">
       <motion.div
@@ -139,44 +160,69 @@ export default function InProgress() {
         </form>
       </motion.div>
 
-      <div className="mt-6 w-full max-w-lg">
-        {currentTasks.length === 0 ? (
-          <p className="text-center text-stone-500">
-            No tasks yet. Start adding some!
-          </p>
-        ) : (
-          currentTasks.map((task, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="my-3 p-4 bg-white shadow-md rounded-lg flex justify-between items-center"
-            >
-              <div>
-                <h3 className="text-lg font-semibold text-stone-600">
-                  {task.title}
-                </h3>
-                <p className="text-sm text-stone-400">Due: {task.dueDate}</p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => openModal(task)}
-                  className="text-stone-500 hover:text-stone-600 p-2"
-                >
-                  <Edit size={18} />
-                </button>
-                <button
-                  onClick={() => handleDelete(task._id)}
-                  className="text-red-500 hover:text-red-600 p-2"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            </motion.div>
-          ))
-        )}
-      </div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="tasksList" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false} >
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="mt-6 w-full max-w-lg"
+                  >
+                    {currentTasks.length === 0 ? (
+                      <p className="text-center text-stone-500">
+                        No tasks yet. Start adding some!
+                      </p>
+                    ) : (
+                      currentTasks.map((task, index) => (
+                        <Draggable
+                          key={task._id}
+                          draggableId={String(task?._id)}
+                          index={index}
+                        >
+                          {(provided) => (
+                            <motion.div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.1 }}
+                              className="my-3 p-4 bg-white shadow-md rounded-lg flex justify-between items-center"
+                              whileDrag={{ scale: 1.05, boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
+                              layout
+                            >
+                              <div>
+                                <h3 className="text-lg font-semibold text-stone-600">
+                                  {task.title}
+                                </h3>
+                                <p className="text-sm text-stone-400">
+                                  Due: {task.dueDate}
+                                </p>
+                              </div>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => openModal(task)}
+                                  className="text-stone-500 hover:text-stone-600 p-2"
+                                >
+                                  <Edit size={18} />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(task._id)}
+                                  className="text-red-500 hover:text-red-600 p-2"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </Draggable>
+                      ))
+                    )}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
       {/* Edit Modal */}
       {isModalOpen && (
         <motion.div

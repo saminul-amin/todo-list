@@ -6,7 +6,7 @@ export default function Tasks() {
   return (
     <div>
       <div className="py-12 flex justify-center items-center min-h-screen bg-gradient-to-b from-white to-stone-300">
-        <div className="bg-white p-8 border border-gray-300 rounded-lg shadow-md w-6/12 min-h-screen">
+        <div className="bg-white p-8 border border-gray-300 rounded-lg shadow-md w-8/12 min-h-screen">
           <div className="container mx-auto max-w-6xl grid grid-cols-3 gap-4">
             <Link
               to="todo"
