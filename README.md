@@ -41,8 +41,8 @@ Live Link: [D'Oh List](https://d-oh-list.web.app/)
 
 For feedback, collaboration, or inquiries, reach out to me at:
 - 📧 Email: [saminul.amin@gmail.com](mailto:saminul.amin@gmail.com)
-- 🐦 GitHub: [@saminul-amin](https://github.com/saminul-amin)
-- 💼 LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
+- 🐦 GitHub: [saminul-amin](https://github.com/saminul-amin)
+- 💼 LinkedIn: [Md. Saminul Amin](https://www.linkedin.com/in/md-saminul-amin-91605730a/)
 - 💼 Portfolio: [Saminofolio](https://saminofolio.surge.sh)
 
 ---
