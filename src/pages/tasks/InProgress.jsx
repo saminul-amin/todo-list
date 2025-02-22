@@ -24,7 +24,7 @@ export default function InProgress() {
   } = useQuery({
     queryKey: ["currentTasks"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:5001/in-progress");
+      const res = await axios.get("https://todo-list-one-inky-15.vercel.app/in-progress");
       return res.data;
     },
   });
@@ -36,7 +36,7 @@ export default function InProgress() {
     console.log(data);
     const task = { title: data.title, dueDate: data.date };
     axios
-      .post("http://localhost:5001/in-progress", task)
+      .post("https://todo-list-one-inky-15.vercel.app/in-progress", task)
       .then((res) => {
         console.log(res.data);
         Swal.fire({
@@ -71,7 +71,7 @@ export default function InProgress() {
     const newTask = { title: editedTitle, dueDate: editedDate };
     console.log(newTask);
     axios
-      .put(`http://localhost:5001/in-progress/${editingTask._id}`, newTask)
+      .put(`https://todo-list-one-inky-15.vercel.app/in-progress/${editingTask._id}`, newTask)
       .then((res) => {
         console.log(res);
         refetch();
@@ -93,7 +93,7 @@ export default function InProgress() {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         Swal.fire("Deleted!", "", "success");
-        axios.delete(`http://localhost:5001/in-progress/${id}`).then((res) => {
+        axios.delete(`https://todo-list-one-inky-15.vercel.app/in-progress/${id}`).then((res) => {
           console.log(res.data);
           refetch();
         });
@@ -114,7 +114,7 @@ export default function InProgress() {
     // setTasks(updatedTasks);
     // console.log("hi", updatedTasks);
     try {
-      await axios.put("http://localhost:5001/api/in-progress/reorder", {
+      await axios.put("https://todo-list-one-inky-15.vercel.app/api/in-progress/reorder", {
         tasks: updatedTasks,
       });
       refetch(); 

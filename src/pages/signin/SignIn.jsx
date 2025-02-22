@@ -1,8 +1,10 @@
 import { useForm } from "react-hook-form";
 import { FaGoogle } from "react-icons/fa";
-import useAuth from "../../hooks/useAuth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { TfiHandPointRight } from "react-icons/tfi";
+import Swal from "sweetalert2";
+
+import useAuth from "../../hooks/useAuth";
 
 const SignIn = () => {
   const {
@@ -21,21 +23,28 @@ const SignIn = () => {
         console.log(result.user);
         navigate("/");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Invalid Credentials!",
+          footer: "Please Try Again!",
+        });
+      });
   };
 
   const handleGoogleLogIn = () => {
-    googleSignIn().then((result) => {
-      const user = result.user;
-      setUser(user);
-      // toast("Sign In Successfull");
-      navigate(location?.state ? location.state : "/");
-    })
-    .catch((err) => {
-      // toast("Sign In Failed. Try Again!");
-      console.log(err);
-    });
-  }
+    googleSignIn()
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        navigate(location?.state ? location.state : "/");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div className="py-12 flex justify-center items-center min-h-screen bg-gradient-to-b from-white to-stone-300">

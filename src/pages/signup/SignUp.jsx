@@ -1,11 +1,11 @@
-import { useForm } from "react-hook-form";
-import { FaGoogle } from "react-icons/fa";
-import useAuth from "../../hooks/useAuth";
-
-import Swal from "sweetalert2";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { FaGoogle } from "react-icons/fa";
 import { TfiHandPointRight } from "react-icons/tfi";
+import Swal from "sweetalert2";
+
+import useAuth from "../../hooks/useAuth";
 
 const SignUp = () => {
   const {
@@ -23,7 +23,7 @@ const SignUp = () => {
     // I need to fix the existing user issue
     createUser(data.email, data.password)
       .then((result) => {
-        console.log(result.user);
+        // console.log(result.user);
         setUser(result.user);
         updateUserProfile({ displayName: data.name })
           .then(() => {
@@ -39,14 +39,22 @@ const SignUp = () => {
               email: data.email,
             };
             axios
-              .post("http://localhost:5001/users", newUser)
+              .post("https://todo-list-one-inky-15.vercel.app/users", newUser)
               .then((res) => console.log(res.data));
             reset();
             navigate("/");
           })
           .catch((err) => console.log(err));
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+          footer: 'Please Try Again!'
+        });
+      });
   };
 
   const handleGoogleLogIn = () => {
@@ -54,11 +62,9 @@ const SignUp = () => {
       .then((result) => {
         const user = result.user;
         setUser(user);
-        // toast("Sign In Successfull");
         navigate(location?.state ? location.state : "/");
       })
       .catch((err) => {
-        // toast("Sign In Failed. Try Again!");
         console.log(err);
       });
   };

@@ -24,7 +24,7 @@ export default function Todo() {
   } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:5001/todo");
+      const res = await axios.get("https://todo-list-one-inky-15.vercel.app/todo");
       // console.log("Fetched tasks:", res.data);
       return res.data;
     },
@@ -36,7 +36,7 @@ export default function Todo() {
     console.log(data);
     const task = { title: data.title, dueDate: data.date };
     axios
-      .post("http://localhost:5001/todo", task)
+      .post("https://todo-list-one-inky-15.vercel.app/todo", task)
       .then((res) => {
         console.log(res.data);
         Swal.fire({
@@ -65,7 +65,7 @@ export default function Todo() {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         Swal.fire("Deleted!", "", "success");
-        axios.delete(`http://localhost:5001/todo/${id}`).then((res) => {
+        axios.delete(`https://todo-list-one-inky-15.vercel.app/todo/${id}`).then((res) => {
           console.log(res);
           refetch();
         });
@@ -94,7 +94,7 @@ export default function Todo() {
     const newTask = { title: editedTitle, dueDate: editedDate };
     console.log(newTask);
     axios
-      .put(`http://localhost:5001/todo/${editingTask._id}`, newTask)
+      .put(`https://todo-list-one-inky-15.vercel.app/todo/${editingTask._id}`, newTask)
       .then((res) => {
         console.log(res);
         refetch();
@@ -114,7 +114,7 @@ export default function Todo() {
     // setTasks(updatedTasks);
     // console.log("hi", updatedTasks);
     try {
-      await axios.put("http://localhost:5001/api/todo/reorder", {
+      await axios.put("https://todo-list-one-inky-15.vercel.app/api/todo/reorder", {
         tasks: updatedTasks,
       });
       refetch(); 
