@@ -28,7 +28,7 @@ const NavBar = () => {
       </li>
       <li>
         <Link
-          to="/tasks"
+          to="/tasks/todo"
           className="text-white py-2 px-4 block md:inline-block hover:bg-stone-700 rounded-lg"
         >
           Tasks

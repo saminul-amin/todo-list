@@ -8,6 +8,7 @@ import Tasks from "../pages/tasks/Tasks";
 import Todo from "../pages/tasks/Todo";
 import InProgress from "../pages/tasks/InProgress";
 import Done from "../pages/tasks/Done";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
       },
       {
         path: "tasks",
-        element: <Tasks />,
+        element: <PrivateRoute><Tasks /></PrivateRoute>,
         children: [
           {
             path: "todo",

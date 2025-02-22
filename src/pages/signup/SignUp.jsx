@@ -4,7 +4,8 @@ import useAuth from "../../hooks/useAuth";
 
 import Swal from "sweetalert2";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { TfiHandPointRight } from "react-icons/tfi";
 
 const SignUp = () => {
   const {
@@ -14,7 +15,7 @@ const SignUp = () => {
     reset,
     formState: { errors },
   } = useForm();
-  const { createUser, updateUserProfile, setUser } = useAuth();
+  const { createUser, updateUserProfile, googleSignIn, setUser } = useAuth();
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
@@ -46,6 +47,20 @@ const SignUp = () => {
           .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
+  };
+
+  const handleGoogleLogIn = () => {
+    googleSignIn()
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        // toast("Sign In Successfull");
+        navigate(location?.state ? location.state : "/");
+      })
+      .catch((err) => {
+        // toast("Sign In Failed. Try Again!");
+        console.log(err);
+      });
   };
 
   return (
@@ -170,7 +185,7 @@ const SignUp = () => {
         </form>
         <div>
           <button
-            type="submit"
+            onClick={handleGoogleLogIn}
             className="mt-6 w-full bg-stone-500 text-white py-2 rounded-lg hover:bg-stone-700 transition duration-200"
           >
             <p className="flex items-center justify-center">
@@ -178,6 +193,16 @@ const SignUp = () => {
               &nbsp; Sign In With Google
             </p>
           </button>
+        </div>
+        <div className="mt-4">
+          <TfiHandPointRight className="inline mr-2 text-lg" /> Have an account?
+          Please{" "}
+          <Link
+            to="/signin"
+            className="text-stone-500 font-semibold text-lg underline hover:text-slate-500"
+          >
+            Sign In
+          </Link>
         </div>
       </div>
     </div>
